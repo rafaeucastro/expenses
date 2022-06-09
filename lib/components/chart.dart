@@ -6,8 +6,10 @@ import 'chart_bar.dart';
 
 class Chart extends StatelessWidget {
   final List<Transaction> recentTransactions;
+  final String Function(double) formatedValue;
 
-  const Chart(this.recentTransactions, {Key? key}) : super(key: key);
+  const Chart(this.recentTransactions, this.formatedValue, {Key? key})
+      : super(key: key);
 
   List<Map<String, Object>> get groupedTransactions {
     return List.generate(7, (index) {
@@ -30,7 +32,7 @@ class Chart extends StatelessWidget {
         'day': DateFormat.E().format(weekDay)[0],
         'value': totalSUM,
       };
-    });
+    }).reversed.toList();
   }
 
   double get _weekTotalValue {
@@ -44,18 +46,19 @@ class Chart extends StatelessWidget {
     groupedTransactions;
     return Card(
       elevation: 6,
-      margin: EdgeInsets.all(20),
+      margin: const EdgeInsets.all(20),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: groupedTransactions.map((tr) {
-            return Flexible(
-              fit: FlexFit.tight,
+            return Expanded(
               child: ChartBar(
                 label: tr['day'].toString(),
-                percentage: ((tr['value'] as double) / _weekTotalValue),
-                value: (tr['value'] as double),
+                percentage: _weekTotalValue == 0
+                    ? 0
+                    : ((tr['value'] as double) / _weekTotalValue),
+                value: formatedValue(tr['value'] as double),
               ),
             );
           }).toList(),

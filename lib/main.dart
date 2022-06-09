@@ -15,7 +15,7 @@ class ExpensesApp extends StatelessWidget {
     final ThemeData tema = ThemeData();
 
     return MaterialApp(
-      home: MyHomePage(),
+      home: const MyHomePage(),
       theme: tema.copyWith(
           colorScheme: tema.colorScheme
               .copyWith(primary: Colors.purple, secondary: Colors.amber),
@@ -26,60 +26,44 @@ class ExpensesApp extends StatelessWidget {
             fontWeight: FontWeight.bold,
             color: Colors.black,
           )),
+          buttonTheme: const ButtonThemeData(
+            buttonColor: Colors.white,
+          ),
           appBarTheme: const AppBarTheme(
             titleTextStyle: TextStyle(
-              fontFamily: 'Quicksand',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+                fontFamily: 'Quicksand',
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white),
           )),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _transactions = [
-    Transaction(
-      id: 't0',
-      title: "Celular novo",
-      value: 920.65,
-      date: DateTime.now().subtract(Duration(days: 33)),
-    ),
-    Transaction(
-      id: 't1',
-      title: "Novo tênis de corrida",
-      value: 220.65,
-      date: DateTime.now().subtract(Duration(days: 3)),
-    ),
-    Transaction(
-      id: 't2',
-      title: "Conta de Luz",
-      value: 9999311.2,
-      date: DateTime.now().subtract(Duration(days: 4)),
-    ),
-  ];
+  final List<Transaction> _transactions = [];
 
   List<Transaction> get _recentTransactions {
     return _transactions.where((tr) {
       return tr.date.isAfter(DateTime.now().subtract(
-        Duration(days: 7),
+        const Duration(days: 7),
       ));
     }).toList();
   }
 
-  _addTransactions(String title, double value) {
+  _addTransactions(String title, double value, DateTime date) {
     final newTransaction = Transaction(
       id: Random().nextDouble().toString(),
       title: title,
       value: value,
-      date: DateTime.now(),
+      date: date,
     );
 
     setState(() {
@@ -87,6 +71,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     Navigator.of(context).pop();
+  }
+
+  _removeTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((tr) => tr.id == id);
+    });
   }
 
   _openTransactionFormModal(BuildContext context) {
@@ -99,9 +89,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    String _formatedValue(double value) {
+      double K = 1000.0;
+      double M = 1000000.0;
+      double B = 1000000000.0;
+      if (value >= B) {
+        return 'R\$${(value / B).toStringAsFixed(2)}B';
+      } else if (value >= M) {
+        return 'R\$${(value / M).toStringAsFixed(2)}M';
+      } else if (value >= K) {
+        return 'R\$${(value / K).toStringAsFixed(2)}K';
+      }
+      return 'R\$${value.toStringAsFixed(2)}';
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Despesas Pessoais"),
+        title: Text(
+          "Despesas Pessoais",
+          style: Theme.of(context).appBarTheme.titleTextStyle,
+        ),
         actions: [
           IconButton(
               onPressed: () => _openTransactionFormModal(context),
@@ -112,8 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Chart(_recentTransactions),
-            TransactionList(_transactions),
+            Chart(_recentTransactions, _formatedValue),
+            TransactionList(_transactions, _removeTransaction, _formatedValue),
           ],
         ),
       ),

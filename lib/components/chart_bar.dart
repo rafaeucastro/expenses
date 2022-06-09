@@ -2,29 +2,33 @@ import 'package:flutter/material.dart';
 
 class ChartBar extends StatelessWidget {
   final String label;
-  final double value;
+  final String value;
   final double percentage;
 
   const ChartBar({
     required this.label,
     required this.percentage,
     required this.value,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        FittedBox(
-          child: Text(
-            textAlign: TextAlign.center,
-            'R\$\n${value.toStringAsFixed(2)}',
+        Container(
+          height: 30,
+          padding: const EdgeInsets.all(5),
+          child: FittedBox(
+            child: Text(
+              textAlign: TextAlign.center,
+              value,
+            ),
           ),
         ),
-        SizedBox(height: 5),
-        Container(
-          height: 60,
+        SizedBox(
+          height: 70,
           width: 10,
           child: Stack(
             alignment: Alignment.bottomCenter,
@@ -35,7 +39,7 @@ class ChartBar extends StatelessWidget {
                     color: Colors.grey,
                     width: 1.0,
                   ),
-                  color: Color.fromRGBO(220, 220, 220, 1),
+                  color: const Color.fromRGBO(220, 220, 220, 1),
                   borderRadius: BorderRadius.circular(5),
                 ),
               ),
@@ -51,8 +55,10 @@ class ChartBar extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 5),
-        Text(label),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Text(label),
+        ),
       ],
     );
   }
