@@ -13,10 +13,9 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * (0.70),
-      child: transactions.isEmpty
-          ? Column(
+    return transactions.isEmpty
+        ? LayoutBuilder(builder: (context, constraint) {
+            return Column(
               children: [
                 const SizedBox(height: 20),
                 Text("Nenhuma transação cadastrada!",
@@ -25,52 +24,58 @@ class TransactionList extends StatelessWidget {
                   height: 20,
                 ),
                 SizedBox(
-                  height: 200,
+                  height: constraint.maxHeight * 0.6,
                   child: Image.asset(
                     'assets\\images\\waiting.png',
                     fit: BoxFit.cover,
                   ),
                 )
               ],
-            )
-          : ListView.builder(
-              itemCount: transactions.length,
-              itemBuilder: (ctx, index) {
-                final tr = transactions[index];
-                return Card(
-                  elevation: 5,
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 5,
-                    horizontal: 8,
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      radius: 30,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: FittedBox(
-                          child: Text(
-                            _formatedValue(tr.value),
-                            style: const TextStyle(color: Colors.white),
-                          ),
+            );
+          })
+        : ListView.builder(
+            itemCount: transactions.length,
+            itemBuilder: (ctx, index) {
+              final tr = transactions[index];
+              return Card(
+                elevation: 5,
+                margin: const EdgeInsets.symmetric(
+                  vertical: 5,
+                  horizontal: 8,
+                ),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    radius: 30,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: FittedBox(
+                        child: Text(
+                          _formatedValue(tr.value),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
-                    title: Text(
-                      tr.title,
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    subtitle: Text(DateFormat('d MMM y').format(tr.date)),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () => onRemove(tr.id),
-                      color: Colors.red,
-                    ),
                   ),
-                );
-              },
-            ),
-    );
+                  title: Text(
+                    tr.title,
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  subtitle: Text(DateFormat('d MMM y').format(tr.date)),
+                  trailing: MediaQuery.of(context).size.width > 470
+                      ? ElevatedButton.icon(
+                          onPressed: () => onRemove(tr.id),
+                          icon: const Icon(Icons.delete),
+                          label: const Text('Remover'),
+                        )
+                      : IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => onRemove(tr.id),
+                          color: Theme.of(context).errorColor,
+                        ),
+                ),
+              );
+            },
+          );
   }
 }

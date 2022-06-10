@@ -47,22 +47,18 @@ class Chart extends StatelessWidget {
     return Card(
       elevation: 6,
       margin: const EdgeInsets.all(20),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: groupedTransactions.map((tr) {
-            return Expanded(
-              child: ChartBar(
-                label: tr['day'].toString(),
-                percentage: _weekTotalValue == 0
-                    ? 0
-                    : ((tr['value'] as double) / _weekTotalValue),
-                value: formatedValue(tr['value'] as double),
-              ),
-            );
-          }).toList(),
-        ),
+      child: Row(
+        children: groupedTransactions.map((tr) {
+          return Expanded(
+            child: ChartBar(
+              label: tr['day'].toString(),
+              percentage: _weekTotalValue == 0
+                  ? 0
+                  : ((tr['value'] as double) / _weekTotalValue),
+              value: formatedValue(tr['value'] as double),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
