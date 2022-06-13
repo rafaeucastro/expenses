@@ -23,6 +23,8 @@ class AdaptativeTextField extends StatelessWidget {
             controller: controller,
             onSubmitted: submitForm,
             keyboardType: textInputType,
+            placeholder: label,
+            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
           )
         : TextField(
             controller: controller,
