@@ -21,30 +21,31 @@ class ExpensesApp extends StatelessWidget {
     return MaterialApp(
       home: const MyHomePage(),
       theme: tema.copyWith(
-          colorScheme: tema.colorScheme
-              .copyWith(primary: Colors.purple, secondary: Colors.amber),
-          textTheme: tema.textTheme.copyWith(
-              headline6: const TextStyle(
-            fontFamily: 'Quicksand',
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          )),
-          buttonTheme: const ButtonThemeData(
-            buttonColor: Colors.white,
+        colorScheme: tema.colorScheme
+            .copyWith(primary: Colors.purple, secondary: Colors.amber),
+        textTheme: tema.textTheme.copyWith(
+            headline6: const TextStyle(
+          fontFamily: 'Quicksand',
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        )),
+        buttonTheme: const ButtonThemeData(
+          buttonColor: Colors.white,
+        ),
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(
+              fontFamily: 'Quicksand',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.purple,
           ),
-          appBarTheme: const AppBarTheme(
-            titleTextStyle: TextStyle(
-                fontFamily: 'Quicksand',
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white),
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: TextButton.styleFrom(
-              backgroundColor: Theme.of(context).errorColor,
-            ),
-          )),
+        ),
+      ),
     );
   }
 }
@@ -122,10 +123,14 @@ class _MyHomePageState extends State<MyHomePage> {
     final mediaQuery = MediaQuery.of(context);
     bool isLandscape = mediaQuery.orientation == Orientation.landscape;
 
+    final iconList = Platform.isIOS ? CupertinoIcons.refresh : Icons.list;
+    final chartList =
+        Platform.isIOS ? CupertinoIcons.refresh : Icons.show_chart;
+
     final actions = [
       if (isLandscape)
         _getIconButton(
-          _showChart ? Icons.list : Icons.show_chart,
+          _showChart ? iconList : chartList,
           () {
             setState(() {
               _showChart = !_showChart;
@@ -138,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     ];
 
-    final appBar = AppBar(
+    final PreferredSizeWidget appBar = AppBar(
       title: Text(
         "Despesas Pessoais",
         style: Theme.of(context).appBarTheme.titleTextStyle,
@@ -150,7 +155,8 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar.preferredSize.height -
         mediaQuery.padding.top;
 
-    final bodyPage = SingleChildScrollView(
+    final bodyPage = SafeArea(
+        child: SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -183,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
         ],
       ),
-    );
+    ));
 
     return Platform.isIOS
         ? CupertinoPageScaffold(
