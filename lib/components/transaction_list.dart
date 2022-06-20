@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:expenses/models/transaction.dart';
-import 'package:intl/intl.dart';
+import 'transaction_item.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -36,44 +36,11 @@ class TransactionList extends StatelessWidget {
         : ListView.builder(
             itemCount: transactions.length,
             itemBuilder: (ctx, index) {
-              final tr = transactions[index];
-              return Card(
-                elevation: 5,
-                margin: const EdgeInsets.symmetric(
-                  vertical: 5,
-                  horizontal: 8,
-                ),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    radius: 30,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: FittedBox(
-                        child: Text(
-                          _formatedValue(tr.value),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                  title: Text(
-                    tr.title,
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  subtitle: Text(DateFormat('d MMM y').format(tr.date)),
-                  trailing: MediaQuery.of(context).size.width > 470
-                      ? ElevatedButton.icon(
-                          onPressed: () => onRemove(tr.id),
-                          icon: const Icon(Icons.delete),
-                          label: const Text('Remover'),
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () => onRemove(tr.id),
-                          color: Theme.of(context).errorColor,
-                        ),
-                ),
+              final transaction = transactions[index];
+              return TransactionItem(
+                formatedValue: _formatedValue,
+                transaction: transaction,
+                onRemove: onRemove,
               );
             },
           );
