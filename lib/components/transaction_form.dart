@@ -43,6 +43,7 @@ class _TransactionFormState extends State<TransactionForm> {
               controller: _titleController,
               submitForm: (value) => _submitForm(),
               label: 'Título',
+              textInputType: TextInputType.text,
             ),
             AdaptativeTextField(
               controller: _valueController,

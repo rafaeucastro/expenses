@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/transaction.dart';
+import 'dart:math';
 
-class TransactionItem extends StatelessWidget {
+class TransactionItem extends StatefulWidget {
   final String Function(double p1) _formatedValue;
   final Transaction transaction;
   final void Function(String p1) onRemove;
@@ -16,6 +17,28 @@ class TransactionItem extends StatelessWidget {
         super(key: key);
 
   @override
+  State<TransactionItem> createState() => _TransactionItemState();
+}
+
+class _TransactionItemState extends State<TransactionItem> {
+  static const colors = [
+    Colors.purple,
+    Colors.red,
+    Colors.blue,
+    Colors.orange,
+  ];
+
+  Color? _backgroundColor;
+
+  @override
+  void initState() {
+    super.initState();
+
+    int i = Random().nextInt(4);
+    _backgroundColor = colors[i];
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 5,
@@ -25,32 +48,32 @@ class TransactionItem extends StatelessWidget {
       ),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.primary,
+          backgroundColor: _backgroundColor,
           radius: 30,
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: FittedBox(
               child: Text(
-                _formatedValue(transaction.value),
+                widget._formatedValue(widget.transaction.value),
                 style: const TextStyle(color: Colors.white),
               ),
             ),
           ),
         ),
         title: Text(
-          transaction.title,
+          widget.transaction.title,
           style: Theme.of(context).textTheme.headline6,
         ),
-        subtitle: Text(DateFormat('d MMM y').format(transaction.date)),
+        subtitle: Text(DateFormat('d MMM y').format(widget.transaction.date)),
         trailing: MediaQuery.of(context).size.width > 470
             ? ElevatedButton.icon(
-                onPressed: () => onRemove(transaction.id),
+                onPressed: () => widget.onRemove(widget.transaction.id),
                 icon: const Icon(Icons.delete),
                 label: const Text('Remover'),
               )
             : IconButton(
                 icon: const Icon(Icons.delete),
-                onPressed: () => onRemove(transaction.id),
+                onPressed: () => widget.onRemove(widget.transaction.id),
                 color: Theme.of(context).errorColor,
               ),
       ),
